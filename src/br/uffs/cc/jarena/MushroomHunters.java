@@ -21,6 +21,7 @@ public class MushroomHunters extends Agente
         // Quando o cogumelo sair de perto do Agente ele irá voltar a se mover
 		if (isParado() && getEnergia() < this.qtdEnergia) {
             setDirecao(geraDirecaoAleatoria());
+			System.out.println("Soldado " + getId() + " avançando !");
         }
 
 		// Se não conseguimos nos mover para a direção atual, quer dizer
@@ -30,6 +31,7 @@ public class MushroomHunters extends Agente
 			// Como não conseguimos nos mover, vamos escolher uma direção
 			// nova.
 			setDirecao(geraDirecaoAleatoria());
+			System.out.println("Soldado " + getId() + " Algo bloqueando alterando caminho.");
 		}
 		
 		// Se o agente conseguie se dividir (tem energia) e se o total de energia
@@ -42,9 +44,11 @@ public class MushroomHunters extends Agente
         this.qtdEnergia = getEnergia();
         // O agente para, obtendo mais energia do cogumelo
         para();
+		System.out.println("Agente " + getId() + " Recebendo Energia");
         // Se a energia dele estivar bem alta ele divide
-        if(podeDividir() && getEnergia() >= 900) {
+        if(podeDividir() && getEnergia() > 900) {
 			divide();
+			System.out.println("Agente " + getId() + " Enegia cheia se dividindo.");
 		}
 
 	}
@@ -54,17 +58,46 @@ public class MushroomHunters extends Agente
 		// e eles estão batalhando (ambos tomam dano).
 		if (getEnergia() > energiaRestanteInimigo) {
 			para();
+			System.out.println("Agente " + getId() + " tomando dano.");
 		} else {
 			setDirecao(geraDirecaoAleatoria());
+			System.out.println("Agente " + getId() + " fugindo da luta.");
 		}
 	}
 	
 	public void ganhouCombate() {
 		// Invocado se estamos batalhando e nosso inimigo morreu.
+		System.out.println("Combate ganho !");
 	}
 	
 	public void recebeuMensagem(String msg) {
 		// Invocado sempre que um agente aliado próximo envia uma mensagem.
+
+		String[] Coordenadas = msg.split(",");
+		int meuX = Integer.parseInt(Coordenadas[0]);
+		int meuY = Integer.parseInt(Coordenadas[1]);
+		System.out.println("Energia proxima enviando mensagem !");
+		
+		MovePara(meuX, meuY);
+	}
+
+	public void MovePara(int x, int y) {
+		// Move para ele recebe como parametro os numeros da coordenada de um agente que
+		// esta recebendo energia;
+		// o que eu quero fazer é que meus agentes se movam para esse lugar no mapa.
+		if (getX() > x) {
+			System.out.println("Me movendo para captar energia!");
+			setDirecao(ESQUERDA);
+		} else if (getX() < x) {
+			System.out.println("Me movendo para captar energia!");
+			setDirecao(DIREITA);
+		} else if (getY() > y) {
+			System.out.println("Me movendo para captar energia!");
+			setDirecao(CIMA);
+		} else if (getY() < y) {
+			System.out.println("Me movendo para captar energia!");
+			setDirecao(BAIXO);
+		}
 	}
 	
 	public String getEquipe() {

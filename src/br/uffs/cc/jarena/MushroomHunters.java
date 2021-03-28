@@ -10,7 +10,7 @@ package br.uffs.cc.jarena;
 
 public class MushroomHunters extends Agente
 {
-    int qtdEnergia;
+    public int qtdEnergia;
 	public MushroomHunters(Integer x, Integer y, Integer energia) {
 		super(x, y, energia);
 		setDirecao(geraDirecaoAleatoria());
@@ -19,7 +19,7 @@ public class MushroomHunters extends Agente
 	
 	public void pensa() {
         // Quando o cogumelo sair de perto do Agente ele irá voltar a se mover
-        if (isParado() && getEnergia() < this.qtdEnergia) {
+		if (isParado() && getEnergia() < this.qtdEnergia) {
             setDirecao(geraDirecaoAleatoria());
         }
 
@@ -38,6 +38,7 @@ public class MushroomHunters extends Agente
 	}
 	
 	public void recebeuEnergia() {
+		//Invocado sempre que o agente recebe energia.
         this.qtdEnergia = getEnergia();
         // O agente para, obtendo mais energia do cogumelo
         para();
@@ -51,6 +52,11 @@ public class MushroomHunters extends Agente
 	public void tomouDano(int energiaRestanteInimigo) {
 		// Invocado quando o agente está na mesma posição que um agente inimigo
 		// e eles estão batalhando (ambos tomam dano).
+		if (getEnergia() > energiaRestanteInimigo) {
+			para();
+		} else {
+			setDirecao(geraDirecaoAleatoria());
+		}
 	}
 	
 	public void ganhouCombate() {
@@ -58,11 +64,10 @@ public class MushroomHunters extends Agente
 	}
 	
 	public void recebeuMensagem(String msg) {
-
+		// Invocado sempre que um agente aliado próximo envia uma mensagem.
 	}
 	
 	public String getEquipe() {
-		// Definimos que o nome da equipe do agente é "Fernando".
 		return "MushroomHunters";
 	}
 }

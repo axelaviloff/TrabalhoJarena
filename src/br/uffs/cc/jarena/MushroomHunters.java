@@ -1,47 +1,57 @@
-/**
- * Um exemplo de agente que anda aleatoriamente na arena. Esse agente pode ser usado como base
- * para a criação de um agente mais esperto. Para mais informações sobre métodos que podem
- * ser utilizados, veja a classe Agente.java.
- * 
- * Fernando Bevilacqua <fernando.bevilacqua@uffs.edu.br>
- */
-
 package br.uffs.cc.jarena;
 
 public class MushroomHunters extends Agente
 {
-    public int qtdEnergia;
+    public int quantidadeEnergia;
+	public int aux;
+	public int aux2;
+	public int quantidadeIds;
+
 	public MushroomHunters(Integer x, Integer y, Integer energia) {
 		super(x, y, energia);
 		setDirecao(geraDirecaoAleatoria());
-        this.qtdEnergia = getEnergia();
+        this.quantidadeEnergia = getEnergia();
+		this.aux = 0;
+		this.aux2 = 0;
+		this.quantidadeIds = 0;
 	}
 	
 	public void pensa() {
-        // Quando o cogumelo sair de perto do Agente ele irá voltar a se mover
-		if (isParado() && getEnergia() < this.qtdEnergia) {
+		// Faz todos os Agentes andarem pra baixo
+		if (aux == 0) {
+			setDirecao(BAIXO);
+		}
+
+		// Espalha os Agentes na direção direita
+		if (aux % 5 == 0) {
+			if (aux2 == getId() && quantidadeIds < 15) {
+				setDirecao(DIREITA);
+				this.quantidadeIds++;
+			}
+			aux2++;
+		}
+
+        // Agente volta a mover-se após distanciar-se de um cogumelo
+		if (isParado() && getEnergia() < this.quantidadeEnergia) {
             setDirecao(geraDirecaoAleatoria());
-			System.out.println("Soldado " + getId() + " avançando !");
+			System.out.println("Agente " + getId() + " avançando !");
         }
 
 		// Se não conseguimos nos mover para a direção atual, quer dizer
 		// que chegamos no final do mapa ou existe algo bloqueando nosso
 		// caminho.
 		if(!podeMoverPara(getDirecao())) {
-			// Como não conseguimos nos mover, vamos escolher uma direção
-			// nova.
 			setDirecao(geraDirecaoAleatoria());
-			System.out.println("Soldado " + getId() + " Algo bloqueando alterando caminho.");
+			System.out.println("Agente " + getId() + " Algo bloqueando alterando caminho.");
 		}
-		
-		// Se o agente conseguie se dividir (tem energia) e se o total de energia
-		// do agente é maior que 400, nos dividimos. O agente filho terá a metade
-		// da nossa energia atual.
+		aux++;
 	}
 	
+	// Invocado sempre que o agente recebe energia.
 	public void recebeuEnergia() {
-		//Invocado sempre que o agente recebe energia.
-        this.qtdEnergia = getEnergia();
+		// Envia a posição para aliados próximos
+		enviaMensagem(String.valueOf(getX()) + "," + String.valueOf(getY()));
+        this.quantidadeEnergia = getEnergia();
         // O agente para, obtendo mais energia do cogumelo
         para();
 		System.out.println("Agente " + getId() + " Recebendo Energia");
@@ -51,11 +61,10 @@ public class MushroomHunters extends Agente
 			System.out.println("Agente " + getId() + " Enegia cheia se dividindo.");
 		}
 
+
 	}
-	
+	// Invocado quando o agente está na mesma posição que um agente inimigo e eles estão batalhando (ambos tomam dano).
 	public void tomouDano(int energiaRestanteInimigo) {
-		// Invocado quando o agente está na mesma posição que um agente inimigo
-		// e eles estão batalhando (ambos tomam dano).
 		if (getEnergia() > energiaRestanteInimigo) {
 			para();
 			System.out.println("Agente " + getId() + " tomando dano.");
@@ -65,38 +74,27 @@ public class MushroomHunters extends Agente
 		}
 	}
 	
+	// Invocado se estamos batalhando e nosso inimigo morreu.
 	public void ganhouCombate() {
-		// Invocado se estamos batalhando e nosso inimigo morreu.
-		System.out.println("Combate ganho !");
+		System.out.println("GG Easy. Combate ganho!");
 	}
 	
+	// Invocado sempre que um agente aliado próximo envia uma mensagem.
 	public void recebeuMensagem(String msg) {
-		// Invocado sempre que um agente aliado próximo envia uma mensagem.
 
-		String[] Coordenadas = msg.split(",");
-		int meuX = Integer.parseInt(Coordenadas[0]);
-		int meuY = Integer.parseInt(Coordenadas[1]);
-		System.out.println("Energia proxima enviando mensagem !");
+		String[] localizacao = msg.split(",");
+		int x = Integer.parseInt(localizacao[0]);
+		int y = Integer.parseInt(localizacao[1]);
+		System.out.println("Agente " + getId() + " recebeu mensagem.");
 		
-		MovePara(meuX, meuY);
-	}
-
-	public void MovePara(int x, int y) {
-		// Move para ele recebe como parametro os numeros da coordenada de um agente que
-		// esta recebendo energia;
-		// o que eu quero fazer é que meus agentes se movam para esse lugar no mapa.
-		if (getX() > x) {
-			System.out.println("Me movendo para captar energia!");
-			setDirecao(ESQUERDA);
-		} else if (getX() < x) {
-			System.out.println("Me movendo para captar energia!");
+		if (x > getX()){
 			setDirecao(DIREITA);
-		} else if (getY() > y) {
-			System.out.println("Me movendo para captar energia!");
-			setDirecao(CIMA);
-		} else if (getY() < y) {
-			System.out.println("Me movendo para captar energia!");
+		} else if (x < getX()) {
+			setDirecao(ESQUERDA);
+		} else if (y > getY()){
 			setDirecao(BAIXO);
+		} else if (y < getY()) {
+			setDirecao(CIMA);
 		}
 	}
 	

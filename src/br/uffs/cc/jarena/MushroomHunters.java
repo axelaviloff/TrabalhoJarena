@@ -65,15 +65,14 @@ public class MushroomHunters extends Agente
 	}
 	// Invocado quando o agente está na mesma posição que um agente inimigo e eles estão batalhando (ambos tomam dano).
 	public void tomouDano(int energiaRestanteInimigo) {
-		if (getEnergia() > energiaRestanteInimigo) {
+		if (getEnergia() > energiaRestanteInimigo && aux > 30) {
 			para();
 			System.out.println("Agente " + getId() + " tomando dano.");
-		} else {
+		} else if (getEnergia() < energiaRestanteInimigo && aux > 30) {
 			setDirecao(geraDirecaoAleatoria());
 			System.out.println("Agente " + getId() + " fugindo da luta.");
 		}
 	}
-	
 	// Invocado se estamos batalhando e nosso inimigo morreu.
 	public void ganhouCombate() {
 		System.out.println("GG Easy. Combate ganho!");
